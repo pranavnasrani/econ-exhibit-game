@@ -8,7 +8,9 @@ export interface SimulationData {
 
 export interface ResultsData {
   year: number;
+  fare: number;
   totalRevenue: number;
+  costs: number;
   ridership: number;
   satisfaction: number;
   profit: number;
@@ -21,5 +23,5 @@ export interface FinalScoreData {
     avgSatisfaction: number;
     avgRidership: number;
     finalReport: string;
-    termYears: number[];
+    results: ResultsData[];
 }

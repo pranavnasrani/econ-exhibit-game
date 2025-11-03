@@ -65,12 +65,25 @@
               scanline: {
                 '0%': { backgroundPosition: '0 0' },
                 '100%': { backgroundPosition: '0 -20px' }
+              },
+              glitch: {
+                '0%, 100%': { transform: 'translate(0, 0)', opacity: 1 },
+                '10%': { transform: 'translate(-2px, 2px)' },
+                '20%': { transform: 'translate(2px, -2px)' },
+                '30%': { transform: 'translate(-2px, -2px)' },
+                '40%': { transform: 'translate(2px, 2px)' },
+                '50%': { transform: 'translate(0, 0)', opacity: 0.8 },
+                '60%': { transform: 'translate(-1px, 1px)' },
+                '70%': { transform: 'translate(1px, -1px)' },
+                '80%': { transform: 'translate(-1px, -1px)' },
+                '90%': { transform: 'translate(1px, 1px)' },
               }
             },
             animation: {
               pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               fadeIn: 'fadeIn 0.5s ease-out forwards',
               scanline: 'scanline 0.5s linear infinite',
+              glitch: 'glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite',
             }
           },
         },

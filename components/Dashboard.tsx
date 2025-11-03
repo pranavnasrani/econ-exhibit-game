@@ -2,14 +2,14 @@ import React from 'react';
 import { ResultsData } from '../types';
 import * as Recharts from 'recharts';
 
-const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } = Recharts;
+const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList, Legend, GroupedBar } = Recharts;
 
 interface DashboardProps {
-  data: ResultsData;
+  data: Omit<ResultsData, 'year' | 'fare' | 'outcomeMessage'>;
 }
 
 const formatRidership = (value: number) => `${(value / 1_000_000).toFixed(2)}M`;
-const formatProfit = (value: number) => `$${(value / 1_000).toFixed(0)}k`;
+const formatCurrency = (value: number) => `$${(value / 1_000).toFixed(0)}k`;
 const formatSatisfaction = (value: number) => `${value.toFixed(0)}%`;
 
 const getBarColor = (value: number) => {
@@ -53,11 +53,41 @@ const MetricChart: React.FC<{ name: string; value: number; maxValue: number; for
     );
 };
 
+const ProfitChart: React.FC<{ revenue: number; costs: number; profit: number }> = ({ revenue, costs, profit }) => {
+    const chartData = [{ name: 'Financials', revenue, costs }];
+    
+    return (
+        <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg shadow-lg">
+            <h3 className="text-lg font-bold text-gray-300 uppercase tracking-wider mb-2">Financials</h3>
+            <div className="w-full h-40">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData} margin={{ top: 20, right: 0, left: 0, bottom: 5 }}>
+                        <XAxis dataKey="name" hide />
+                        <YAxis hide domain={[0, 'dataMax + 100000']}/>
+                        <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} cursor={{fill: 'rgba(255,255,255,0.1)'}}/>
+                        <Legend wrapperStyle={{fontSize: '12px', bottom: -5}}/>
+                        <Bar dataKey="revenue" name="Revenue" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={40}>
+                             <LabelList dataKey="revenue" position="top" formatter={formatCurrency} className="fill-gray-300 font-bold text-xs" />
+                        </Bar>
+                         <Bar dataKey="costs" name="Costs" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={40}>
+                             <LabelList dataKey="costs" position="top" formatter={formatCurrency} className="fill-gray-300 font-bold text-xs" />
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+             <p className={`text-2xl font-bold mt-1 ${profit < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                Profit: {formatCurrency(profit)}
+            </p>
+        </div>
+    );
+};
+
+
 const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   return (
     <div className="h-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricChart name="Ridership" value={data.ridership} maxValue={1200000} formatter={formatRidership} color="#3b82f6" />
-        <MetricChart name="Profit" value={data.profit} maxValue={600000} formatter={formatProfit} color={data.profit < 0 ? '#ef4444' : '#22c55e'} />
+        <MetricChart name="Ridership" value={data.ridership} maxValue={1300000} formatter={formatRidership} color="#3b82f6" />
+        <ProfitChart revenue={data.totalRevenue} costs={data.costs} profit={data.profit} />
         <MetricChart name="Satisfaction" value={data.satisfaction} maxValue={100} formatter={formatSatisfaction} color={getBarColor(data.satisfaction)} />
     </div>
   );

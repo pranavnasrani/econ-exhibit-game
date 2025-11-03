@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { ResultsData } from '../types';
 
 interface ControlPanelProps {
   year: number;
@@ -8,28 +6,18 @@ interface ControlPanelProps {
   fare: number;
   onFareChange: (fare: number) => void;
   onConfirm: () => void;
-  previousYearResults: ResultsData | null;
   termProgress: number;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFareChange, onConfirm, previousYearResults, termProgress }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFareChange, onConfirm, termProgress }) => {
   return (
     <div className="h-full p-6 bg-gray-900/50 border border-red-500/50 rounded-lg shadow-glow-red flex flex-col justify-between">
       {/* HEADER */}
       <div className="flex-shrink-0">
         <div className="flex justify-between items-baseline">
             <h2 className="text-4xl font-bold text-red-400">YEAR: {year}</h2>
-            <span className="text-lg font-semibold text-gray-400">Term: {termProgress} of 3</span>
+            <span className="text-lg font-semibold text-gray-400">Year {termProgress} of 3</span>
         </div>
-        {previousYearResults && (
-            <div className="mt-4 mb-2 p-3 bg-gray-800/70 border border-gray-700 rounded-lg text-sm animate-fadeIn">
-                <h4 className="font-bold text-gray-400 uppercase tracking-wider">Report: {previousYearResults.year}</h4>
-                <div className="flex justify-between">
-                    <span>Profit: <span className={previousYearResults.profit < 0 ? 'text-red-400' : 'text-green-400'}>S${previousYearResults.profit.toLocaleString(undefined, {maximumFractionDigits: 0})}</span></span>
-                    <span>Satisfaction: <span className="text-blue-400">{previousYearResults.satisfaction.toFixed(1)}%</span></span>
-                </div>
-            </div>
-        )}
       </div>
 
       {/* CONTENT */}
