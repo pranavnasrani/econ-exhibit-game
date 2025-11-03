@@ -1,4 +1,4 @@
-export type GameState = 'selecting_year' | 'playing' | 'results_modal' | 'final_score';
+export type GameState = 'intro' | 'selecting_year' | 'playing' | 'results_modal' | 'final_score';
 
 export interface SimulationData {
   ridership: number;
@@ -23,5 +23,6 @@ export interface FinalScoreData {
     avgSatisfaction: number;
     avgRidership: number;
     finalReport: string;
+    directorTitle: string;
     results: ResultsData[];
 }

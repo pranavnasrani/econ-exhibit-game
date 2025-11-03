@@ -9,7 +9,18 @@ interface ControlPanelProps {
   termProgress: number;
 }
 
+const getFareColor = (fare: number): string => {
+    const percentage = fare / 2.0; // Max fare is 2.0
+    const red = Math.min(255, Math.floor(255 * percentage * 1.8));
+    const green = Math.min(255, Math.floor(255 * (1 - percentage) * 1.8));
+    if (fare < 0.8) return '#22c55e'; // green-500
+    if (fare > 1.6) return '#ef4444'; // red-500
+    return `rgb(${red}, ${green}, 80)`;
+};
+
 const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFareChange, onConfirm, termProgress }) => {
+  const fareColor = getFareColor(fare);
+
   return (
     <div className="h-full p-6 bg-gray-900/50 border border-red-500/50 rounded-lg shadow-glow-red flex flex-col justify-between">
       {/* HEADER */}
@@ -32,20 +43,20 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFar
         <div className="border border-gray-700 p-4 rounded-lg bg-black/20">
             <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-2 text-center">Fare Control</h3>
             <div className="flex items-center justify-center space-x-4 mt-4">
-                <span className="text-lg text-gray-400">S$0.50</span>
+                <span className="text-lg text-gray-400 w-16 text-center">S$0.00</span>
                 <input
                     id="fare-slider"
                     type="range"
-                    min="0.50"
-                    max="2.50"
+                    min="0"
+                    max="2"
                     step="0.01"
                     value={fare}
                     onChange={(e) => onFareChange(parseFloat(e.target.value))}
                     className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer custom-range"
                 />
-                <span className="text-lg text-gray-400">S$2.50</span>
+                <span className="text-lg text-gray-400 w-16 text-center">S$2.00</span>
             </div>
-            <p className="text-5xl font-bold text-center mt-4 text-white">
+            <p className="text-5xl font-bold text-center mt-4 transition-colors" style={{ color: fareColor }}>
               S${fare.toFixed(2)}
             </p>
         </div>

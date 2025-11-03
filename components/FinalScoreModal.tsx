@@ -7,7 +7,6 @@ import HistoricalChart from './HistoricalChart';
 interface FinalScoreModalProps {
   scoreData: FinalScoreData;
   onStartNewTerm: () => void;
-  onRestart: () => void;
 }
 
 const ScoreCircle: React.FC<{ score: number }> = ({ score }) => {
@@ -50,7 +49,7 @@ const ScoreCircle: React.FC<{ score: number }> = ({ score }) => {
     );
 };
 
-const FinalScoreModal: React.FC<FinalScoreModalProps> = ({ scoreData, onStartNewTerm, onRestart }) => {
+const FinalScoreModal: React.FC<FinalScoreModalProps> = ({ scoreData, onStartNewTerm }) => {
   const avgResultsForDashboard: Omit<ResultsData, 'year' | 'fare'| 'outcomeMessage'> = {
       ridership: scoreData.avgRidership,
       profit: scoreData.avgProfit,
@@ -69,11 +68,12 @@ const FinalScoreModal: React.FC<FinalScoreModalProps> = ({ scoreData, onStartNew
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 text-center">
                     <ScoreCircle score={scoreData.score} />
-                    <p className="text-center text-gray-300 mt-2 font-bold">Overall Score</p>
+                    <p className="text-gray-300 mt-2 font-bold">Overall Score</p>
                 </div>
                 <div className="text-center sm:text-left flex-grow">
+                  <h3 className="text-2xl font-bold text-white tracking-wider mb-2">{scoreData.directorTitle}</h3>
                   <p className="font-bold text-red-400 block mb-2">AI ADVISOR ANALYSIS:</p>
                   <p className="text-lg text-gray-200 italic">"{scoreData.finalReport}"</p>
                 </div>
@@ -93,12 +93,9 @@ const FinalScoreModal: React.FC<FinalScoreModalProps> = ({ scoreData, onStartNew
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-            <button onClick={onStartNewTerm} className="px-6 py-3 bg-red-600/80 hover:bg-red-500 text-white font-bold rounded-lg shadow-glow-red transition-all">
-              Begin New Term
-            </button>
-            <button onClick={onRestart} className="px-6 py-3 bg-gray-600/80 hover:bg-gray-500 text-white font-bold rounded-lg transition-all">
-              Restart Simulation
+          <div className="mt-6 flex justify-center">
+            <button onClick={onStartNewTerm} className="px-8 py-4 bg-red-600/80 hover:bg-red-500 text-white font-bold rounded-lg shadow-glow-red transition-all text-xl">
+              BEGIN NEW TERM
             </button>
           </div>
         </div>
