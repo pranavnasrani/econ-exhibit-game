@@ -1,5 +1,5 @@
 
-export const YEARS = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009];
+export const YEARS = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007];
 
 export const SCENARIOS: { [key: number]: string } = {
   2000: "The new millennium begins with economic optimism. Commuters are hopeful.",

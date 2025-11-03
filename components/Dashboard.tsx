@@ -33,22 +33,22 @@ const MetricChart: React.FC<{ name: string; value: number; maxValue: number; for
     const chartData = [{ name, value }];
 
     return (
-        <div className="h-full w-full flex flex-col items-center p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg shadow-lg">
-            <h3 className="text-xl font-bold text-gray-300 uppercase tracking-wider mb-4">{name}</h3>
-            <div className="w-full h-48">
+        <div className="h-full w-full flex flex-col items-center p-2 sm:p-4 bg-gray-900/50 border border-gray-700/50 rounded-lg shadow-lg">
+            <h3 className="text-lg font-bold text-gray-300 uppercase tracking-wider mb-2">{name}</h3>
+            <div className="w-full h-40">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} layout="vertical" margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
                         <XAxis type="number" hide domain={[0, maxValue]} />
                         <YAxis type="category" dataKey="name" hide />
                         <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.1)'}}/>
-                        <Bar dataKey="value" barSize={40} radius={[8, 8, 8, 8]}>
-                            <LabelList dataKey="value" position="insideRight" formatter={formatter} className="fill-white font-bold text-lg" />
+                        <Bar dataKey="value" barSize={32} radius={[6, 6, 6, 6]}>
+                            <LabelList dataKey="value" position="insideRight" formatter={formatter} className="fill-white font-bold text-md" />
                              <Cell fill={color}/>
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-            <p className="text-3xl font-bold mt-2" style={{color}}>{formatter(value)}</p>
+            <p className="text-2xl font-bold mt-1" style={{color}}>{formatter(value)}</p>
         </div>
     );
 };

@@ -1,5 +1,4 @@
-
-export type GameState = 'selecting_year' | 'playing' | 'results';
+export type GameState = 'selecting_year' | 'playing' | 'results_modal' | 'final_score';
 
 export interface SimulationData {
   ridership: number;
@@ -8,9 +7,19 @@ export interface SimulationData {
 }
 
 export interface ResultsData {
+  year: number;
   totalRevenue: number;
   ridership: number;
   satisfaction: number;
   profit: number;
   outcomeMessage: string;
+}
+
+export interface FinalScoreData {
+    score: number;
+    avgProfit: number;
+    avgSatisfaction: number;
+    avgRidership: number;
+    finalReport: string;
+    termYears: number[];
 }
