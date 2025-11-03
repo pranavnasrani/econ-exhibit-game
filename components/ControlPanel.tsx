@@ -22,9 +22,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFar
 
       {/* CONTENT */}
       <div className="flex-grow flex flex-col justify-center gap-6 my-6">
-        <div className="border border-gray-700 p-4 rounded-lg bg-black/20">
-            <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-2">Intel Briefing</h3>
-            <p className="text-gray-300 text-md">{scenario}</p>
+        <div className="border border-gray-700 p-4 rounded-lg bg-black/30 shadow-inner">
+            <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-2">INCOMING TRANSMISSION...</h3>
+            <p className="text-green-300 text-lg font-mono tracking-wide min-h-[3em] flex items-center">
+              <span className="animate-pulse">&gt; {scenario}</span>
+            </p>
         </div>
 
         <div className="border border-gray-700 p-4 rounded-lg bg-black/20">

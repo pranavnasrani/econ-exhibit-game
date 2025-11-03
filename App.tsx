@@ -44,7 +44,7 @@ const App: React.FC = () => {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = 'gemini-flash-latest';
         const historicalContext = SCENARIOS[year].description;
-        const prompt = `You are a simulation master for 'SMRT Economy', an economic game about Singapore's MRT system. Generate a very short, one-sentence, telegram-style intelligence briefing for the year ${year}. Tone: futuristic mission control. Focus on the main economic event: "${historicalContext}". Max 15 words.`;
+        const prompt = `You are an economic analyst for 'SMRT Economy', a transport simulation game. Generate a sharp, one-sentence economic advisory for the year ${year}, based on this key event: "${historicalContext}". Focus on potential impact to public transport demand and operational costs. Be concise and statistical. Max 20 words.`;
         
         const response = await ai.models.generateContent({ model, contents: prompt });
         return response.text;
@@ -72,11 +72,10 @@ const App: React.FC = () => {
     setIsGenerating(false);
   };
   
-  const calculateMetrics = useCallback((currentFare: number, year: number) => {
+  const calculateMetrics = useCallback((currentFare: number, year: number, previousFare: number) => {
     const { baseRidership, elasticity, baseFare, operationalCost } = ECONOMIC_PARAMS;
     const scenario = SCENARIOS[year];
     
-    // Add volatility
     const volatilityFactor = 1 + (Math.random() - 0.5) * scenario.volatility;
     const costFactor = 1 + (Math.random() - 0.2) * scenario.costModifier;
     
@@ -87,9 +86,23 @@ const App: React.FC = () => {
     const totalRevenue = currentFare * ridership;
     const profit = totalRevenue - totalCosts;
 
-    // Satisfaction is harshly penalized for high fares
-    let satisfaction = 100 - (40 * Math.pow(Math.max(0, currentFare - 1.2), 1.8));
-    satisfaction = Math.max(0, Math.min(100, satisfaction));
+    // Stricter, more realistic satisfaction logic
+    const baseSatisfaction = 100 - (40 * Math.pow(Math.max(0, currentFare - 1.20), 1.5));
+    const fareDelta = currentFare - previousFare;
+    let fareChangeImpact = 0;
+
+    if (fareDelta > 0) { // Price increased
+      // Penalty is harsher in volatile years (crises)
+      const contextualMultiplier = 1 + (scenario.volatility * 2.5);
+      const basePenalty = -(fareDelta * 80); // A 10c increase is a base -8 penalty
+      fareChangeImpact = basePenalty * contextualMultiplier;
+    } else if (fareDelta < 0) { // Price decreased
+      // Small bonus for decreasing fare
+      fareChangeImpact = Math.abs(fareDelta) * 20;
+    }
+    
+    const finalSatisfaction = baseSatisfaction + fareChangeImpact;
+    const satisfaction = Math.max(0, Math.min(100, finalSatisfaction));
 
     return { ridership, profit, satisfaction, totalRevenue, costs: totalCosts };
   }, []);
@@ -100,12 +113,14 @@ const App: React.FC = () => {
     
     setIsProcessing(true);
 
-    const metrics = calculateMetrics(fare, currentYear);
+    const previousFare = currentYearIndex > 0 ? termResults[currentYearIndex - 1].fare : INITIAL_FARE;
+    const metrics = calculateMetrics(fare, currentYear, previousFare);
+    
     let outcomeMessage = "Performance data analyzed.";
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = 'gemini-flash-latest';
-        const prompt = `You are an AI advisor in 'SMRT Economy'. Year: ${currentYear}. Fare: S$${fare.toFixed(2)}. Resulted in: Profit of S$${metrics.profit.toLocaleString(undefined, {maximumFractionDigits: 0})}, Public Satisfaction ${metrics.satisfaction.toFixed(1)}%. Key event: "${SCENARIOS[currentYear].description}". Write a very short, one-sentence performance analysis (max 20 words). Tone: concise, futuristic AI report.`;
+        const prompt = `You are an AI analyst. Year: ${currentYear}. Fare set to S$${fare.toFixed(2)}. Result: Profit of S$${metrics.profit.toLocaleString(undefined, {maximumFractionDigits: 0})}, Satisfaction ${metrics.satisfaction.toFixed(1)}%. Key Event: "${SCENARIOS[currentYear].description}". Write a sharp, one-sentence performance review (max 20 words). If profit is negative, explicitly mention the loss. Tone: objective, analytical.`;
         const response = await ai.models.generateContent({ model, contents: prompt });
         outcomeMessage = response.text;
     } catch(e) {
@@ -123,15 +138,8 @@ const App: React.FC = () => {
         outcomeMessage: outcomeMessage,
     };
 
-    if (termResults.length < 2) {
-        setYearlyResult(newResult);
-        setGameState('results_modal');
-    } else {
-        const finalResults = [...termResults, newResult];
-        setTermResults(finalResults);
-        calculateFinalScore(finalResults);
-    }
-    
+    setYearlyResult(newResult);
+    setGameState('results_modal');
     setIsProcessing(false);
   };
 
@@ -141,16 +149,20 @@ const App: React.FC = () => {
     setTermResults(updatedResults);
     setYearlyResult(null);
 
-    const nextIndex = currentYearIndex + 1;
-    setCurrentYearIndex(nextIndex);
-    const nextYear = termYears[nextIndex];
+    if (currentYearIndex < 2) {
+      const nextIndex = currentYearIndex + 1;
+      setCurrentYearIndex(nextIndex);
+      const nextYear = termYears[nextIndex];
 
-    setFare(INITIAL_FARE);
-    setIsGenerating(true);
-    setGameState('playing');
-    const scenario = await getAiScenario(nextYear);
-    setAiScenario(scenario);
-    setIsGenerating(false);
+      setFare(INITIAL_FARE);
+      setIsGenerating(true);
+      setGameState('playing');
+      const scenario = await getAiScenario(nextYear);
+      setAiScenario(scenario);
+      setIsGenerating(false);
+    } else {
+      calculateFinalScore(updatedResults);
+    }
   };
 
   const calculateFinalScore = async (finalResults: ResultsData[]) => {
@@ -159,25 +171,20 @@ const App: React.FC = () => {
     const avgSatisfaction = finalResults.reduce((sum, r) => sum + r.satisfaction, 0) / 3;
     const avgRidership = finalResults.reduce((sum, r) => sum + r.ridership, 0) / 3;
 
-    // Stricter scoring: heavily penalize low satisfaction and negative profit
-    const satisfactionScore = (Math.pow(avgSatisfaction / 100, 2)) * 100; // non-linear, rewards high satisfaction
+    // Stricter, non-linear scoring
+    const satisfactionScore = (Math.pow(avgSatisfaction / 100, 2)) * 100;
     
-    const profitBenchmark = 100000; // A decent profit target
-    let profitScore = 0;
-    if (avgProfit > 0) {
-        profitScore = Math.min(100, (avgProfit / profitBenchmark) * 50);
-    } else {
-        profitScore = Math.max(-50, (avgProfit / 50000) * 50); // Heavy penalty for losses
-    }
-    profitScore = Math.max(0, 50 + profitScore); // Base of 50, modified by profit/loss
+    const profitBenchmark = 150000; // A strong profit target
+    const profitScore = Math.max(0, Math.min(100, 50 + (avgProfit / profitBenchmark) * 50));
 
-    const finalScore = Math.round((satisfactionScore * 0.65) + (profitScore * 0.35));
+    // Profitability is now more critical
+    const finalScore = Math.round((satisfactionScore * 0.55) + (profitScore * 0.45));
 
     let finalReport = "Term complete. Performance metrics analyzed.";
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const model = 'gemini-flash-latest';
-        const prompt = `You are a senior AI advisor. The Director's 3-year term just ended. Key Metrics: Final Score ${finalScore}, Avg Profit S$${avgProfit.toFixed(0)}, Avg Satisfaction ${avgSatisfaction.toFixed(1)}%. Write a single, conclusive, telegram-style summary sentence (max 15 words) evaluating their performance.`;
+        const prompt = `You are a senior AI advisor. A 3-year term ended. Key Metrics: Final Score ${finalScore}, Avg Profit S$${avgProfit.toFixed(0)}, Avg Satisfaction ${avgSatisfaction.toFixed(1)}%. Write a single, conclusive summary sentence (max 20 words) evaluating the economic performance. Directly comment on profitability and public satisfaction.`;
         const response = await ai.models.generateContent({ model, contents: prompt });
         finalReport = response.text;
     } catch (error) {
@@ -270,6 +277,7 @@ const App: React.FC = () => {
                 <ResultsModal
                     results={yearlyResult}
                     onContinue={handleContinueFromResults}
+                    isFinalYear={currentYearIndex === 2}
                 />
             )}
             
