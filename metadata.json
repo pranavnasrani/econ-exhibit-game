@@ -1,0 +1,5 @@
+{
+  "name": "Ticket Price Challenge: The SMRT Economy",
+  "description": "A futuristic, live simulation web app where players act as the head of SMRT between 2000–2009. They must set the MRT fare and watch a live simulation of ridership, profit, and satisfaction change in real time.",
+  "requestFramePermissions": []
+}
