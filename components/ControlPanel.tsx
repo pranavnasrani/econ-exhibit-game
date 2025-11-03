@@ -42,7 +42,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFar
 
         <div className="border border-gray-700 p-4 rounded-lg bg-black/20">
             <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-2 text-center">Fare Control</h3>
-            <div className="flex items-center justify-center space-x-4 mt-4">
+            <p className="text-5xl font-bold text-center mb-4 transition-colors" style={{ color: fareColor }}>
+              S${fare.toFixed(2)}
+            </p>
+            <div className="flex items-center justify-center space-x-4">
                 <span className="text-lg text-gray-400 w-16 text-center">S$0.00</span>
                 <input
                     id="fare-slider"
@@ -56,9 +59,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFar
                 />
                 <span className="text-lg text-gray-400 w-16 text-center">S$2.00</span>
             </div>
-            <p className="text-5xl font-bold text-center mt-4 transition-colors" style={{ color: fareColor }}>
-              S${fare.toFixed(2)}
-            </p>
         </div>
       </div>
       

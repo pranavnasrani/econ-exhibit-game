@@ -224,8 +224,8 @@ const App: React.FC = () => {
     const strategicScore = Math.max(0, ((strategicPoints + 3) / 6) * 100);
 
     const finalScore = Math.round(
-      (satisfactionScore * 0.40) + 
-      (profitScore * 0.40) + 
+      (satisfactionScore * 0.45) + 
+      (profitScore * 0.35) + 
       (strategicScore * 0.20)
     );
 
