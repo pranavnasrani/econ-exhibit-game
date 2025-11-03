@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { GameState, ResultsData } from './types';
@@ -57,7 +58,7 @@ const App: React.FC = () => {
 
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const model = 'gemini-2.5-flash';
+        const model = 'gemini-flash-latest';
         const historicalContext = SCENARIOS[year];
         const prompt = `You are a simulation master for 'SMRT Economy', an economic game about Singapore's MRT system. Generate a short, immersive, one-paragraph intelligence briefing for the year ${year}. Your tone must be like a sci-fi mission control. Hint at the economic climate and public mood without giving exact numbers. Weave in this key context: "${historicalContext}". Keep it to 2-3 sentences.`;
         
@@ -81,7 +82,7 @@ const App: React.FC = () => {
 
     try {
          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-         const model = 'gemini-2.5-flash';
+         const model = 'gemini-flash-latest';
          const prompt = `You are an economic advisor AI in the 'SMRT Economy' simulation. The Transport Director has finished year ${currentYear}.
 
          - Fare Set: S$${fare.toFixed(2)}

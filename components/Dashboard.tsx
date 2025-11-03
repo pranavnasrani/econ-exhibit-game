@@ -1,6 +1,8 @@
 import React from 'react';
 import { ResultsData } from '../types';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import * as Recharts from 'recharts';
+
+const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } = Recharts;
 
 interface DashboardProps {
   data: ResultsData;
