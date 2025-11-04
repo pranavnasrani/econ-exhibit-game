@@ -10,11 +10,11 @@ interface ControlPanelProps {
 }
 
 const getFareColor = (fare: number): string => {
-    const percentage = fare / 2.0; // Max fare is 2.0
+    const percentage = fare / 1.0; // Max fare is 1.0
     const red = Math.min(255, Math.floor(255 * percentage * 1.8));
     const green = Math.min(255, Math.floor(255 * (1 - percentage) * 1.8));
-    if (fare < 0.8) return '#22c55e'; // green-500
-    if (fare > 1.6) return '#ef4444'; // red-500
+    if (fare < 0.4) return '#22c55e'; // green-500
+    if (fare > 0.8) return '#ef4444'; // red-500
     return `rgb(${red}, ${green}, 80)`;
 };
 
@@ -51,13 +51,13 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ year, scenario, fare, onFar
                     id="fare-slider"
                     type="range"
                     min="0"
-                    max="2"
+                    max="1"
                     step="0.01"
                     value={fare}
                     onChange={(e) => onFareChange(parseFloat(e.target.value))}
                     className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer custom-range"
                 />
-                <span className="text-lg text-gray-400 w-16 text-center">S$2.00</span>
+                <span className="text-lg text-gray-400 w-16 text-center">S$1.00</span>
             </div>
         </div>
       </div>

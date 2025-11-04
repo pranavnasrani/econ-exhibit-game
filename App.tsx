@@ -98,7 +98,7 @@ const App: React.FC = () => {
     if (currentFare < 0.01) { // Free fare scenario
         const ridership = baseRidership * 1.25 * (1 + (Math.random() - 0.5) * scenario.volatility); // 25% ridership boost
         const totalCosts = operationalCost * (1 + (Math.random() - 0.2) * scenario.costModifier);
-        return { ridership, profit: -totalCosts, satisfaction: 96, totalRevenue: 0, costs: totalCosts };
+        return { ridership, profit: -totalCosts, satisfaction: 100, totalRevenue: 0, costs: totalCosts };
     }
 
     const volatilityFactor = 1 + (Math.random() - 0.5) * scenario.volatility;
@@ -111,8 +111,8 @@ const App: React.FC = () => {
     const totalRevenue = currentFare * ridership;
     const profit = totalRevenue - totalCosts;
 
-    // Stricter, more realistic satisfaction logic
-    const baseSatisfaction = 100 - (50 * Math.pow(Math.max(0, currentFare - 1.10), 1.6));
+    // Stricter, more realistic satisfaction logic, adjusted for $0-$1 fare range
+    const baseSatisfaction = 100 - (80 * Math.pow(Math.max(0, currentFare - 0.85), 1.5));
     const fareDelta = currentFare - previousFare;
     let fareChangeImpact = 0;
 
@@ -125,7 +125,7 @@ const App: React.FC = () => {
     }
     
     const finalSatisfaction = baseSatisfaction + fareChangeImpact;
-    const satisfaction = Math.max(0, Math.min(96, finalSatisfaction));
+    const satisfaction = Math.max(0, Math.min(100, finalSatisfaction));
 
     return { ridership, profit, satisfaction, totalRevenue, costs: totalCosts };
   }, []);

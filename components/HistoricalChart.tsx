@@ -44,7 +44,7 @@ const HistoricalChart: React.FC<HistoricalChartProps> = ({ data }) => {
                             tick={{ fill: '#9ca3af', fontSize: 12 }} 
                         />
                         <YAxis 
-                            domain={[0, 2.2]} 
+                            domain={[0, 1.1]} 
                             tickFormatter={(tick) => `$${tick.toFixed(2)}`}
                             tick={{ fill: '#9ca3af', fontSize: 12 }}
                         />

@@ -16,8 +16,8 @@ export const SCENARIOS: { [key: number]: { description: string; volatility: numb
 export const ECONOMIC_PARAMS = {
   baseRidership: 1_100_000,
   elasticity: -0.3,
-  baseFare: 1.20,
+  baseFare: 0.80,
   operationalCost: 850_000,
 };
 
-export const INITIAL_FARE = 1.20;
+export const INITIAL_FARE = 0.80;
